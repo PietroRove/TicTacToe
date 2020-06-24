@@ -2,30 +2,51 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 
+/* si tratta di un componente controllato (da Board): 
+ * Square non mantiene più il proprio stato, riceve valori dal componente padre Board ed a sua volta lo informa di quando viene cliccato
+ */
 class Square extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: null,
-    };
-  }
-   
+  //non c'è il costruttore perché square non tiene traccia dello stato della partita internamente. Ci pensa la board
 
   render() {
-    return(
-      <button 
-        className="square" 
-        onClick={() => this.setState({value: 'X'})}
+    return (
+      <button
+        className="square"
+        onClick={() => this.props.onClick()}
       >
-        {this.state.value}
+        {this.props.value}
       </button>
     );
   }
 }
 
 class Board extends React.Component {
+  constructor(props) {
+    super(props);
+    //questo array di stato rappresenta i 9 quadrati della board
+    this.state = {
+      squares: Array(9).fill(null),
+    }
+  }
+
+  handleClick(i) {
+    /* viene fatta una copia per il principio dell'immutabilità. Vantaggi:
+     * - Eliminare la mutazione diretta dei dati ci permette di mantenere versioni precedenti della storia della partita intatte cosicché siano riutilizzabili in seguito
+     * - 
+     */
+    const squares = this.state.squares.slice();
+    squares[i] = 'X';
+    this.setState({ squares: squares });
+  }
+
   renderSquare(i) {
-    return <Square value={i} />;
+    //ogni quadrato riceve il proprio valore corrente(state) dall'array degli stati della board
+    return (
+      <Square
+        value={this.state.squares[i]}
+        onClick={() => this.handleClick(i)} //passo una funzione da Board a Square che viene chiamata ad ogni click. In questo modo modifico lo stato 
+      />
+    );
   }
 
   render() {
