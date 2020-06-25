@@ -90,6 +90,7 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([{
         squares: squares,
+        latestMoveSquare: i
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext
@@ -103,7 +104,10 @@ class Game extends React.Component {
 
     //step dovrebbe essere l'elemento dell'array che vado a mappare, move l'iteratore
     const moves = history.map((step, move) => {
-      const desc = move ? 'Go to move #' + move : 'Go to game start';
+      const latestMoveSquare = step.latestMoveSquare;
+      const col = 1 + latestMoveSquare % 3;
+      const row = 1 + Math.floor(latestMoveSquare / 3);
+      const desc = move ? `Go to move #${move} (${col}, ${row})` : 'Go to game start';
       return (<li key={move}>
         <button onClick={() => this.jumpTo(move)}>
           {desc}
