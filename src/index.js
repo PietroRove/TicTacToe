@@ -50,6 +50,9 @@ class Board extends React.Component {
   }
 }
 
+/* NOTE: negli onclick di questo componente utilizziamo le arrowfunctions. Sarebbero da evitare in favore del bind come spiegato qui
+ * https://it.reactjs.org/docs/handling-events.html
+ */
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -59,6 +62,7 @@ class Game extends React.Component {
       }],
       xIsNext: true,
       stepNumber: 0,
+      isAscending: false
     };
   }
 
@@ -92,13 +96,19 @@ class Game extends React.Component {
     });
   }
 
+  handleSortToggle() {
+    this.setState({
+      isAscending: !this.state.isAscending
+    });
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
     //step dovrebbe essere l'elemento dell'array che vado a mappare, move l'iteratore
-    const moves = history.map((step, move) => {
+    let moves = history.map((step, move) => {
       const latestMoveSquare = step.latestMoveSquare;
       const col = 1 + latestMoveSquare % 3;
       const row = 1 + Math.floor(latestMoveSquare / 3);
@@ -112,6 +122,10 @@ class Game extends React.Component {
         </button>
       </li>);
     });
+
+    if(this.state.isAscending){
+      moves.reverse();
+    }
 
     let status;
     if (winner)
@@ -129,6 +143,10 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <label>move's list order: </label>
+          <button onClick={() => this.handleSortToggle()}>
+            {this.state.isAscending ? 'descending' : 'ascending'}
+          </button>
           <ol>{moves}</ol>
         </div>
       </div>
