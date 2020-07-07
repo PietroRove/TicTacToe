@@ -49,3 +49,8 @@ ul {
 .game-info {
   margin-left: 20px;
 }
+
+.square-selected-bold {
+  float: left;
+  font-weight: bold;
+}
